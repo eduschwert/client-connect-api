@@ -17,7 +17,7 @@ class User {
   id: string;
 
   @Column({ length: 255 })
-  fullName: string;
+  name: string;
 
   @Column({ unique: true, length: 254 })
   email: string;
