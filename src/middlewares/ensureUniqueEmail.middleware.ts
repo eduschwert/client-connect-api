@@ -12,7 +12,7 @@ const ensureUniqueEmailMiddleware = async (
   if (req.body.email) {
     const userRepository: Repository<User> = AppDataSource.getRepository(User);
 
-    const findEmail = await userRepository.findOneBy({
+    const findEmail: User | null = await userRepository.findOneBy({
       email: req.body.email,
     });
 

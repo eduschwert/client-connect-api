@@ -7,6 +7,7 @@ import {
 
 type TUser = z.infer<typeof userSchema>;
 type TUserRequest = z.infer<typeof userSchemaRequest>;
+type TUserUpdate = Partial<TUserRequest>;
 type TUserResponse = z.infer<typeof userSchemaResponse>;
 
-export { TUser, TUserRequest, TUserResponse };
+export { TUser, TUserUpdate, TUserRequest, TUserResponse };

@@ -17,6 +17,8 @@ const userSchemaRequest = userSchema.omit({
   id: true,
 });
 
+const userSchemaUpdate = userSchemaRequest.partial();
+
 const userSchemaResponse = userSchema
   .omit({
     password: true,
@@ -26,4 +28,4 @@ const userSchemaResponse = userSchema
     updatedAt: z.date(),
   });
 
-export { userSchema, userSchemaRequest, userSchemaResponse };
+export { userSchema, userSchemaRequest, userSchemaUpdate, userSchemaResponse };
