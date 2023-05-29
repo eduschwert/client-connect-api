@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { Repository } from 'typeorm';
 import { AppDataSource } from '../data-source';
+
 import { User } from '../entities/user.entitie';
 import { AppError } from '../errors/AppError';
 
@@ -20,8 +21,10 @@ const ensureUserExistsMiddleware = async (
   });
 
   if (!findUser) {
-    throw new AppError('User not found', 404);
+    throw new AppError('User not found or invalid credentials', 401);
   }
+
+  res.locals.user = findUser;
 
   return next();
 };

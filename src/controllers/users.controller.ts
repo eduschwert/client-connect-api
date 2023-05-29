@@ -1,27 +1,33 @@
 import { Request, Response } from 'express';
-import { TUserRequest, TUserUpdate } from '../interfaces/users.interfaces';
 
+import {
+  TUserRequest,
+  TUserResponse,
+  TUserUpdate,
+} from '../interfaces/users.interfaces';
 import createUserService from '../services/users/createUser.service';
 import updateUserService from '../services/users/updateUser.service';
 import deleteUserService from '../services/users/deleteUser.service';
-import retrieveUserService from '../services/users/retrieveUser.service';
-
-const retrieveUserController = async (req: Request, res: Response) => {
-  const userId: string = res.locals.userId;
-
-  const user = await retrieveUserService(userId);
-
-  return res.json(user);
-};
+import { User } from '../entities/user.entitie';
+import { userSchemaResponse } from '../schemas/users.schema';
 
 const createUserController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   const userData: TUserRequest = req.body;
+
   const newUser = await createUserService(userData);
 
   return res.status(201).json(newUser);
+};
+
+const retrieveUserController = async (req: Request, res: Response) => {
+  const user: User = res.locals.user;
+
+  const userParsed: TUserResponse = userSchemaResponse.parse(user);
+
+  return res.json(userParsed);
 };
 
 const updateUserController = async (
@@ -29,9 +35,9 @@ const updateUserController = async (
   res: Response
 ): Promise<Response> => {
   const userData: TUserUpdate = req.body;
-  const userId: string = res.locals.userId;
+  const user: User = res.locals.user;
 
-  const updatedUser = await updateUserService(userData, userId);
+  const updatedUser = await updateUserService(userData, user);
 
   return res.json(updatedUser);
 };
@@ -40,9 +46,9 @@ const deleteUserController = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const userId: string = res.locals.userId;
+  const user: User = res.locals.user;
 
-  await deleteUserService(userId);
+  await deleteUserService(user);
 
   return res.status(204).send();
 };

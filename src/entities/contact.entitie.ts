@@ -14,7 +14,7 @@ class Contact {
   id: string;
 
   @Column({ length: 255 })
-  fullName: string;
+  name: string;
 
   @Column({ unique: true, length: 254 })
   email: string;
@@ -28,7 +28,7 @@ class Contact {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   user: User;
 }
 

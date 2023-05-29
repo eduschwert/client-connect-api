@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 
-const ensureAuthMiddleware = (
+const ensureAuthMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -26,12 +26,11 @@ const ensureAuthMiddleware = (
           message: 'Invalid token',
         });
       }
-
       res.locals.userId = decoded.sub;
-
-      return next();
     }
   );
+
+  return next();
 };
 
 export default ensureAuthMiddleware;

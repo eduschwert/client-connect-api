@@ -3,7 +3,6 @@ import { User } from '../../entities/user.entitie';
 import { Repository } from 'typeorm';
 import { TUserRequest, TUserResponse } from '../../interfaces/users.interfaces';
 import { userSchemaResponse } from '../../schemas/users.schema';
-import { AppError } from '../../errors/AppError';
 
 const createUserService = async (
   data: TUserRequest

@@ -38,6 +38,7 @@ usersRoutes.patch(
   ensureUniqueEmailMiddleware,
   updateUserController
 );
+
 usersRoutes.delete(
   '',
   ensureAuthMiddleware,
