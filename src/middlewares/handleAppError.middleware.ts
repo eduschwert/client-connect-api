@@ -25,4 +25,4 @@ const handleAppErrorMiddleware = (
   });
 };
 
-export { handleAppErrorMiddleware };
+export default handleAppErrorMiddleware;
