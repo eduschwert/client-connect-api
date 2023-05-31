@@ -6,7 +6,6 @@ const contactSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(3).max(255),
   email: z.string().email().max(254),
-  password: z.string().min(4).max(100),
   phone: z.string().refine((value) => phoneRegex.test(value), {
     message:
       'Phone number must be in the format "(XX) XXXX-XXXX" or "(XX) XXXX-XXXXX"',
@@ -19,14 +18,10 @@ const contactSchemaRequest = contactSchema.omit({
 
 const contactSchemaUpdate = contactSchemaRequest.partial();
 
-const contactSchemaResponse = contactSchema
-  .omit({
-    password: true,
-  })
-  .extend({
-    createdAt: z.date(),
-    updatedAt: z.date(),
-  });
+const contactSchemaResponse = contactSchema.extend({
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});
 
 export {
   contactSchema,

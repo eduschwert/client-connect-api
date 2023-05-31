@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { AppDataSource } from '../data-source';
 
-import { Contact } from '../entities/contact.entitie';
+import { Contact } from '../../entities/contact.entitie';
 
 const ensureIsOwnerMiddleware = (
   req: Request,

@@ -6,20 +6,18 @@ import {
   retrieveUserController,
   updateUserController,
 } from '../controllers/users.controller';
-
 import { userSchemaRequest, userSchemaUpdate } from '../schemas/users.schema';
-
-import ensureDataIsValidMiddleware from '../middlewares/ensureDataIsValid.middleware';
-import ensureUniqueEmailMiddleware from '../middlewares/ensureUniqueEmail.middleware';
-import ensureAuthMiddleware from '../middlewares/ensureAuth.middleware';
-import ensureUserExistsMiddleware from '../middlewares/ensureUserExists.middleware';
+import ensureAuthMiddleware from '../middlewares/global/ensureAuth.middleware';
+import ensureUserExistsMiddleware from '../middlewares/users/ensureUserExists.middleware';
+import ensureDataIsValidMiddleware from '../middlewares/global/ensureDataIsValid.middleware';
+import ensureUniqueEmailUserMiddleware from '../middlewares/users/ensureUniqueEmailUser.middleware';
 
 const usersRoutes = Router();
 
 usersRoutes.post(
   '',
   ensureDataIsValidMiddleware(userSchemaRequest),
-  ensureUniqueEmailMiddleware,
+  ensureUniqueEmailUserMiddleware,
   createUserController
 );
 
@@ -35,7 +33,7 @@ usersRoutes.patch(
   ensureAuthMiddleware,
   ensureUserExistsMiddleware,
   ensureDataIsValidMiddleware(userSchemaUpdate),
-  ensureUniqueEmailMiddleware,
+  ensureUniqueEmailUserMiddleware,
   updateUserController
 );
 

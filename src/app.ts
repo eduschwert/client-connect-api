@@ -3,7 +3,7 @@ import 'express-async-errors';
 import express from 'express';
 import cors from 'cors';
 
-import handleAppErrorMiddleware from './middlewares/handleAppError.middleware';
+import handleAppErrorMiddleware from './middlewares/global/handleAppError.middleware';
 import loginRoutes from './routes/login.routes';
 import usersRoutes from './routes/users.routes';
 import contactsRoutes from './routes/contacts.routes';

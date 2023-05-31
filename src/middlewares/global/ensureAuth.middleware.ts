@@ -27,10 +27,10 @@ const ensureAuthMiddleware = async (
         });
       }
       res.locals.userId = decoded.sub;
+
+      return next();
     }
   );
-
-  return next();
 };
 
 export default ensureAuthMiddleware;

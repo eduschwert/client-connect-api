@@ -16,14 +16,20 @@ const retrieveUserContactsController = async (req: Request, res: Response) => {
   let perPage: number = 5;
   let page: number = 1;
 
-  if (req.query.perPage) {
-    const perPageQueryParam: number = parseInt(req.query.perPage as string);
-    perPage = Math.max(1, Math.min(10, perPageQueryParam));
+  if (typeof req.query.perPage === 'string') {
+    const perPageQueryParam: string = req.query.perPage;
+    const perPageValue: number = parseInt(perPageQueryParam, 10);
+    if (!isNaN(perPageValue) && perPageValue >= 1 && perPageValue <= 10) {
+      perPage = perPageValue;
+    }
   }
 
-  if (req.query.page) {
-    const pageQueryParam: number = parseInt(req.query.page as string);
-    page = Math.max(1, pageQueryParam);
+  if (typeof req.query.page === 'string') {
+    const pageQueryParam: string = req.query.page;
+    const pageValue: number = parseInt(pageQueryParam, 10);
+    if (!isNaN(pageValue) && pageValue >= 1) {
+      page = pageValue;
+    }
   }
 
   const baseUrl: string = `${req.protocol}://${req.get('host')}${req.baseUrl}`;

@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { Repository } from 'typeorm';
-import { AppDataSource } from '../data-source';
+import { AppDataSource } from '../../data-source';
 
-import { AppError } from '../errors/AppError';
-import { Contact } from '../entities/contact.entitie';
+import { AppError } from '../../errors/AppError';
+import { Contact } from '../../entities/contact.entitie';
 
 const ensureContactExistsMiddleware = async (
   req: Request,
