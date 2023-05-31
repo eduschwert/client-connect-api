@@ -30,7 +30,7 @@ const createLoginService = async (loginData: TLogin): Promise<string> => {
     },
     process.env.SECRET_KEY!,
     {
-      expiresIn: '24h',
+      expiresIn: String(process.env.EXPIRES_IN) || '1h',
       subject: String(user.id),
     }
   );
