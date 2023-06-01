@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import 'express-async-errors';
-import express from 'express';
+import express, { Application } from 'express';
 import cors from 'cors';
 import swaggerDocs from './swagger.json';
 import swaggerUi from 'swagger-ui-express';
@@ -10,7 +10,7 @@ import loginRoutes from './routes/login.routes';
 import usersRoutes from './routes/users.routes';
 import contactsRoutes from './routes/contacts.routes';
 
-const app = express();
+const app: Application = express();
 
 app.use(cors());
 app.use(express.json());
