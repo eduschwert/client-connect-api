@@ -1,0 +1,1182 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "clientconnect-api",
+    "description": "clientconnect API: A backend solution for managing your contacts efficiently.",
+    "contact": {
+      "email": "eduardoschwert@yahoo.com.br"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/",
+      "description": "Development environment"
+    },
+    {
+      "url": "",
+      "description": "Production environment"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Create user",
+        "description": "This route is responsible for creating a new user. The \"email\", \"name\", \"phone\", and \"password\" fields are mandatory, and any additional fields sent will be ignored. It is not possible to create a user with an existing email. The password must contain at least 8 characters, including at least one lowercase letter, one uppercase letter, one digit, and one special character.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user_create"
+              },
+              "example": {
+                "name": "Eduardo Schwert",
+                "email": "eduardoschwert@yahoo.com.br",
+                "password": "12345aA!",
+                "phone": "(51) 99290-4748"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK - User creation successfully completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user_return"
+                },
+                "example": {
+                  "id": "8200602e-7d6a-41fb-a0ef-f2036d4f5727",
+                  "name": "Eduardo Schwert",
+                  "email": "eduardoschwert@yahoo.com.br",
+                  "phone": "(51) 99290-4748",
+                  "createdAt": "2023-05-31T18:47:10.201Z",
+                  "updatedAt": "2023-05-31T18:47:10.201Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Some required fields were not sent or are in an invalid format. Please ensure all mandatory fields are provided correctly.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "bad_request_keys_required": {
+                    "value": {
+                      "message": {
+                        "email": ["required"],
+                        "name": ["required"],
+                        "password": ["required"],
+                        "phone": ["required"]
+                      }
+                    }
+                  },
+                  "bad_request_invalid_email": {
+                    "value": {
+                      "message": {
+                        "email": ["Invalid email"]
+                      }
+                    }
+                  },
+                  "bad_request_invalid_password": {
+                    "value": {
+                      "message": {
+                        "password": [
+                          "Password must contain at least 8 characters, including at least one lowercase letter, one uppercase letter, one digit, and one special character."
+                        ]
+                      }
+                    }
+                  },
+                  "bad_request_invalid_phone": {
+                    "value": {
+                      "message": {
+                        "phone": ["Expected string", "received number"]
+                      }
+                    }
+                  },
+                  "bad_request_invalid_phone2": {
+                    "value": {
+                      "message": {
+                        "phone": [
+                          "Phone number must be in the format '(XX) XXXX-XXXX' or '(XX) XXXX-XXXXX'"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - Attempt to create a user with an email that is already registered",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "email_already_exists": {
+                    "value": {
+                      "message": "Email already exists"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Internal Server Error."
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Users"],
+        "summary": "Retrieve user data",
+        "description": "This route is responsible for retrieving a user's profile based on their token.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user_return"
+                },
+                "example": {
+                  "id": "fcd315f5-ae3f-4ef5-a1da-bb92a9a75572",
+                  "name": "Eduardo Schwert",
+                  "email": "eduardoschwert@yahoo.com.br",
+                  "phone": "(51) 99290-4748",
+                  "createdAt": "2023-05-30T22:58:51.353Z",
+                  "updatedAt": "2023-05-30T22:58:51.353Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - No authorization token provided, the provided token has expired, or the token is invalid.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "missing_bearer_token": {
+                    "value": {
+                      "message": "Missing bearer token"
+                    }
+                  },
+                  "jwt_expired": {
+                    "value": {
+                      "message": "jwt expired"
+                    }
+                  },
+                  "invalid_token": {
+                    "value": {
+                      "message": "JWT Invalid"
+                    }
+                  },
+                  "deleted_user": {
+                    "value": {
+                      "message": "User not found or invalid credentials"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Internal Server Error."
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Users"],
+        "summary": "Update user data",
+        "description": "This route is responsible for updating a user's data based on their token. The fields that can be updated include \"name\", \"email\", \"phone\", and \"password\". Any additional fields sent will be ignored.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/user_update"
+              },
+              "example": {
+                "name": "Eduardo Schwert de Freitas"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/user_return"
+                },
+                "example": {
+                  "id": "8200602e-7d6a-41fb-a0ef-f2036d4f5727",
+                  "name": "Eduardo Schwert de Freitas",
+                  "email": "eduardoschwert@yahoo.com.br",
+                  "phone": "(51) 99290-4748",
+                  "createdAt": "2023-05-31T18:47:10.201Z",
+                  "updatedAt": "2023-05-31T18:47:10.201Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Some fields are in an invalid format. Please ensure that all fields are provided correctly.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "bad_request_invalid_email": {
+                    "value": {
+                      "message": {
+                        "email": ["Invalid email"]
+                      }
+                    }
+                  },
+                  "bad_request_invalid_password": {
+                    "value": {
+                      "message": {
+                        "password": [
+                          "Password must contain at least 8 characters, including at least one lowercase letter, one uppercase letter, one digit, and one special character."
+                        ]
+                      }
+                    }
+                  },
+                  "bad_request_invalid_phone": {
+                    "value": {
+                      "message": {
+                        "phone": ["Expected string", "received number"]
+                      }
+                    }
+                  },
+                  "bad_request_invalid_phone2": {
+                    "value": {
+                      "message": {
+                        "phone": [
+                          "Phone number must be in the format '(XX) XXXX-XXXX' or '(XX) XXXX-XXXXX'"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - No authorization token provided, the provided token has expired, or the token is invalid.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "missing_bearer_token": {
+                    "value": {
+                      "message": "Missing bearer token"
+                    }
+                  },
+                  "jwt_expired": {
+                    "value": {
+                      "message": "jwt expired"
+                    }
+                  },
+                  "invalid_token": {
+                    "value": {
+                      "message": "JWT Invalid"
+                    }
+                  },
+                  "deleted_user": {
+                    "value": {
+                      "message": "User not found or invalid credentials"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - Attempt to update a user with an email that is already registered",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "email_already_exists": {
+                    "value": {
+                      "message": "Email already exists"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Internal Server Error."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "summary": "Delete user data",
+        "description": "This route is responsible for deleting a user based on their token.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized - No authorization token provided, the provided token has expired, or the token is invalid.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "missing_bearer_token": {
+                    "value": {
+                      "message": "Missing bearer token"
+                    }
+                  },
+                  "jwt_expired": {
+                    "value": {
+                      "message": "jwt expired"
+                    }
+                  },
+                  "invalid_token": {
+                    "value": {
+                      "message": "JWT Invalid"
+                    }
+                  },
+                  "deleted_user": {
+                    "value": {
+                      "message": "User not found or invalid credentials"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Internal Server Error."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "users/contacts": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Retrieve user contacts",
+        "description": "This route is responsible for retrieving all the contacts of a user based on their token. The contacts are returned with pagination. By default, it returns 5 contacts per page. You can use the `perPage` query parameter to specify the number of contacts per page, with a maximum value of 10. The `page` query parameter is used to navigate between pages and is set to 1 by default.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "perPage",
+            "in": "query",
+            "description": "The number of contacts to be returned per page (maximum: 10).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "default": 5
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page number to navigate through the contacts.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/contact_return"
+                },
+                "example": {
+                  "count": 4,
+                  "previousPage": null,
+                  "nextPage": null,
+                  "data": [
+                    {
+                      "id": "839d8127-79a4-4cbe-9d2d-d0eb00d119c4",
+                      "name": "Antonio",
+                      "email": "antonio@mail.com",
+                      "phone": "(66) 66666-6666",
+                      "createdAt": "2023-06-01T17:06:41.879Z",
+                      "updatedAt": "2023-06-01T17:06:41.879Z"
+                    },
+                    {
+                      "id": "e208fa67-1088-4f3e-b63d-c7331275726a",
+                      "name": "Augusto",
+                      "email": "augusto@mail.com",
+                      "phone": "(77) 77777-7777",
+                      "createdAt": "2023-06-01T17:06:19.910Z",
+                      "updatedAt": "2023-06-01T17:06:19.910Z"
+                    },
+                    {
+                      "id": "8709210b-b19b-49fe-926a-620588764aa2",
+                      "name": "Joao",
+                      "email": "joao@mail.com",
+                      "phone": "(55) 55555-5555",
+                      "createdAt": "2023-06-01T17:06:22.322Z",
+                      "updatedAt": "2023-06-01T17:06:22.322Z"
+                    },
+                    {
+                      "id": "83e89989-d4fa-435a-9b86-b9b9caf53c7d",
+                      "name": "Paulo",
+                      "email": "paulo@mail.com",
+                      "phone": "(99) 99999-9999",
+                      "createdAt": "2023-06-01T17:06:13.770Z",
+                      "updatedAt": "2023-06-01T17:06:13.770Z"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - No authorization token provided, the provided token has expired, or the token is invalid.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "missing_bearer_token": {
+                    "value": {
+                      "message": "Missing bearer token"
+                    }
+                  },
+                  "jwt_expired": {
+                    "value": {
+                      "message": "jwt expired"
+                    }
+                  },
+                  "invalid_token": {
+                    "value": {
+                      "message": "JWT Invalid"
+                    }
+                  },
+                  "deleted_user": {
+                    "value": {
+                      "message": "User not found or invalid credentials"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Internal Server Error."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contacts/{contactId}": {
+      "post": {
+        "tags": ["Contacts"],
+        "summary": "Create contact",
+        "description": "This route is responsible for creating a new contact. The \"email\", \"name\", and \"phone\" fields are mandatory, and any additional fields sent will be ignored. An error will occur if an attempt is made to create a contact with an email or phone number that already exists in your contact list.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/contact_create"
+              },
+              "example": {
+                "name": "Eduardo Schwert",
+                "email": "eduardoschwert@yahoo.com.br",
+                "phone": "(51) 99290-4748"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK - User creation successfully completed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/contact_return"
+                },
+                "example": {
+                  "id": "8200602e-7d6a-41fb-a0ef-f2036d4f5727",
+                  "name": "Eduardo Schwert",
+                  "email": "eduardoschwert@yahoo.com.br",
+                  "phone": "(51) 99290-4748",
+                  "createdAt": "2023-05-31T18:47:10.201Z",
+                  "updatedAt": "2023-05-31T18:47:10.201Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Some required fields were not sent or are in an invalid format. Please ensure all mandatory fields are provided correctly.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "bad_request_keys_required": {
+                    "value": {
+                      "message": {
+                        "email": ["required"],
+                        "name": ["required"],
+                        "phone": ["required"]
+                      }
+                    }
+                  },
+                  "bad_request_invalid_email": {
+                    "value": {
+                      "message": {
+                        "email": ["Invalid email"]
+                      }
+                    }
+                  },
+                  "bad_request_invalid_phone": {
+                    "value": {
+                      "message": {
+                        "phone": ["Expected string", "received number"]
+                      }
+                    }
+                  },
+                  "bad_request_invalid_phone2": {
+                    "value": {
+                      "message": {
+                        "phone": [
+                          "Phone number must be in the format '(XX) XXXX-XXXX' or '(XX) XXXX-XXXXX'"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict - Attempt to create a contact with an email or phone that is already registered in your contacts list.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "email_already_exists": {
+                    "value": {
+                      "message": "You already have a contact with the same email"
+                    }
+                  },
+                  "phone__already_exists": {
+                    "value": {
+                      "message": "You already have a contact with the same phone"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Internal Server Error."
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Contacts"],
+        "summary": "Retrieve contact data from id",
+        "description": "This route is responsible for retrieving a contact  based on their id.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the contact",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/contact_return"
+                },
+                "example": {
+                  "id": "fcd315f5-ae3f-4ef5-a1da-bb92a9a75572",
+                  "name": "Eduardo Schwert",
+                  "email": "eduardoschwert@yahoo.com.br",
+                  "phone": "(51) 99290-4748",
+                  "createdAt": "2023-05-30T22:58:51.353Z",
+                  "updatedAt": "2023-05-30T22:58:51.353Z"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - No authorization token provided, the provided token has expired, or the token is invalid.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "missing_bearer_token": {
+                    "value": {
+                      "message": "Missing bearer token"
+                    }
+                  },
+                  "jwt_expired": {
+                    "value": {
+                      "message": "jwt expired"
+                    }
+                  },
+                  "invalid_token": {
+                    "value": {
+                      "message": "JWT Invalid"
+                    }
+                  },
+                  "deleted_user": {
+                    "value": {
+                      "message": "User not found or invalid credentials"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - The contact with the provided ID was not found.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "contact_not_found": {
+                    "value": {
+                      "message": "Contact not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - The contact with the provided ID does not belong to you. ",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "forbidden_contact": {
+                    "value": {
+                      "message": "You don`t have permissions to perform this action"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Internal Server Error."
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Contacts"],
+        "summary": "Update contact data from id",
+        "description": "This route is responsible for updating a contact based on their id.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the contact",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/contact_update"
+              },
+              "example": {
+                "name": "Eduardo Schwert de Freitas"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/contact_return"
+                },
+                "example": {
+                  "id": "fcd315f5-ae3f-4ef5-a1da-bb92a9a75572",
+                  "name": "Eduardo Schwert de Freitas",
+                  "email": "eduardoschwert@yahoo.com.br",
+                  "phone": "(51) 99290-4748",
+                  "createdAt": "2023-05-30T22:58:51.353Z",
+                  "updatedAt": "2023-05-30T22:58:51.353Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Some required fields were not sent or are in an invalid format. Please ensure all mandatory fields are provided correctly.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "bad_request_invalid_email": {
+                    "value": {
+                      "message": {
+                        "email": ["Invalid email"]
+                      }
+                    }
+                  },
+                  "bad_request_invalid_phone": {
+                    "value": {
+                      "message": {
+                        "phone": ["Expected string", "received number"]
+                      }
+                    }
+                  },
+                  "bad_request_invalid_phone2": {
+                    "value": {
+                      "message": {
+                        "phone": [
+                          "Phone number must be in the format '(XX) XXXX-XXXX' or '(XX) XXXX-XXXXX'"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - Não foi enviado um token de autorização, o token enviado expirou ou o token é inválido.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "missing_bearer_token": {
+                    "value": {
+                      "message": "Missing bearer token"
+                    }
+                  },
+                  "jwt_expired": {
+                    "value": {
+                      "message": "jwt expired"
+                    }
+                  },
+                  "invalid_token": {
+                    "value": {
+                      "message": "JWT Invalid"
+                    }
+                  },
+                  "deleted_user": {
+                    "value": {
+                      "message": "User not found or invalid credentials"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - The contact with the provided ID was not found.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "contact_not_found": {
+                    "value": {
+                      "message": "Contact not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - The contact with the provided ID does not belong to you. ",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "forbidden_contact": {
+                    "value": {
+                      "message": "You don`t have permissions to perform this action"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Internal Server Error."
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Contacts"],
+        "summary": "Delete contact data",
+        "description": "This route is responsible for deleting a contact based on their id.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized - No authorization token provided, the provided token has expired, or the token is invalid.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "missing_bearer_token": {
+                    "value": {
+                      "message": "Missing bearer token"
+                    }
+                  },
+                  "jwt_expired": {
+                    "value": {
+                      "message": "jwt expired"
+                    }
+                  },
+                  "invalid_token": {
+                    "value": {
+                      "message": "JWT Invalid"
+                    }
+                  },
+                  "deleted_user": {
+                    "value": {
+                      "message": "User not found or invalid credentials"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found - The contact with the provided ID was not found.",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "contact_not_found": {
+                    "value": {
+                      "message": "Contact not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden - The contact with the provided ID does not belong to you. ",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "forbidden_contact": {
+                    "value": {
+                      "message": "You don`t have permissions to perform this action"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Internal Server Error."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": ["Login"],
+        "summary": "Registered client login",
+        "description": "This route is responsible for logging in a registered user. The \"email\" and \"password\" fields are mandatory, and any additional fields sent will be ignored. Upon successful login, an access token called \"accessToken\" will be returned, which should be included in requests to routes that require authorization.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/login"
+              },
+              "example": {
+                "email": "eduardoschwert@yahoo.com.br",
+                "password": "12345aA!"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "example": {
+                  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ldG9pZnBlMkBnbWFpbC5jb20iLCJhZG1pbiI6dHJ1ZSwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTY4MjA5MjY4MywiZXhwIjoxNjgyMDk0NDgzLCJzdWIiOiIyIn0.y4xXMb7pFSZ77_Q3jv9IPS_njk-i3XcoYPZwumfjGrU"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request - Some required fields were not sent or are in an invalid format. Please ensure all mandatory fields are provided correctly.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": {
+                    "email": ["required"],
+                    "password": ["required"]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - The email or password is wrong.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Wrong email or password"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Internal Server Error."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "user_create": {
+        "required": ["email", "name", "phone", "password"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        }
+      },
+      "user_update": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        }
+      },
+      "user_return": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "contact_create": {
+        "required": ["email", "name", "phone"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        }
+      },
+      "contact_update": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        }
+      },
+      "contact_return": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "login": {
+        "required": ["email", "password"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

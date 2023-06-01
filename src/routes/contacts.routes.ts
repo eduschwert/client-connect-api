@@ -7,7 +7,7 @@ import {
 import {
   createContactController,
   deleteContactController,
-  retrieveUserContactsController,
+  retrieveContactController,
   updateContactController,
 } from '../controllers/contacts.controller';
 import ensureContactExistsMiddleware from '../middlewares/contacts/ensureContactExists.middleware';
@@ -28,7 +28,12 @@ contactsRoutes.post(
   createContactController
 );
 
-contactsRoutes.get('', retrieveUserContactsController);
+contactsRoutes.get(
+  '/:contactId',
+  ensureContactExistsMiddleware,
+  ensureIsOwnerMiddleware,
+  retrieveContactController
+);
 
 contactsRoutes.patch(
   '/:contactId',

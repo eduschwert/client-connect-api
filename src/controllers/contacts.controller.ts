@@ -7,41 +7,17 @@ import {
 import createContactService from '../services/contacts/createContact.service';
 import updateContactService from '../services/contacts/updateContact.service';
 import deleteContactService from '../services/contacts/deleteContact.service';
-import retrieveUserContactsService from '../services/contacts/retrieveUserContacts.service';
+import retrieveUserContactsService from '../services/users/retrieveUserContacts.service';
 import { User } from '../entities/user.entitie';
 import { Contact } from '../entities/contact.entitie';
+import { contactSchemaResponse } from '../schemas/contacts.schema';
 
-const retrieveUserContactsController = async (req: Request, res: Response) => {
-  const user: User = res.locals.user;
-  let perPage: number = 5;
-  let page: number = 1;
+const retrieveContactController = async (req: Request, res: Response) => {
+  const contact: Contact = res.locals.contact;
 
-  if (typeof req.query.perPage === 'string') {
-    const perPageQueryParam: string = req.query.perPage;
-    const perPageValue: number = parseInt(perPageQueryParam, 10);
-    if (!isNaN(perPageValue) && perPageValue >= 1 && perPageValue <= 10) {
-      perPage = perPageValue;
-    }
-  }
+  const contactParsed = contactSchemaResponse.parse(contact);
 
-  if (typeof req.query.page === 'string') {
-    const pageQueryParam: string = req.query.page;
-    const pageValue: number = parseInt(pageQueryParam, 10);
-    if (!isNaN(pageValue) && pageValue >= 1) {
-      page = pageValue;
-    }
-  }
-
-  const baseUrl: string = `${req.protocol}://${req.get('host')}${req.baseUrl}`;
-
-  const contacts = await retrieveUserContactsService(
-    user,
-    perPage,
-    page,
-    baseUrl
-  );
-
-  return res.json(contacts);
+  return res.json(contactParsed);
 };
 
 const createContactController = async (
@@ -80,7 +56,7 @@ const deleteContactController = async (
 };
 
 export {
-  retrieveUserContactsController,
+  retrieveContactController,
   createContactController,
   updateContactController,
   deleteContactController,

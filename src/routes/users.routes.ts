@@ -3,6 +3,7 @@ import { Router } from 'express';
 import {
   createUserController,
   deleteUserController,
+  retrieveUserContactsController,
   retrieveUserController,
   updateUserController,
 } from '../controllers/users.controller';
@@ -26,6 +27,13 @@ usersRoutes.get(
   ensureAuthMiddleware,
   ensureUserExistsMiddleware,
   retrieveUserController
+);
+
+usersRoutes.get(
+  '/contacts',
+  ensureAuthMiddleware,
+  ensureUserExistsMiddleware,
+  retrieveUserContactsController
 );
 
 usersRoutes.patch(

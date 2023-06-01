@@ -10,6 +10,7 @@ import updateUserService from '../services/users/updateUser.service';
 import deleteUserService from '../services/users/deleteUser.service';
 import { User } from '../entities/user.entitie';
 import { userSchemaResponse } from '../schemas/users.schema';
+import retrieveUserContactsService from '../services/users/retrieveUserContacts.service';
 
 const createUserController = async (
   req: Request,
@@ -28,6 +29,39 @@ const retrieveUserController = async (req: Request, res: Response) => {
   const userParsed: TUserResponse = userSchemaResponse.parse(user);
 
   return res.json(userParsed);
+};
+
+const retrieveUserContactsController = async (req: Request, res: Response) => {
+  const user: User = res.locals.user;
+  let perPage: number = 5;
+  let page: number = 1;
+
+  if (typeof req.query.perPage === 'string') {
+    const perPageQueryParam: string = req.query.perPage;
+    const perPageValue: number = parseInt(perPageQueryParam, 10);
+    if (!isNaN(perPageValue) && perPageValue >= 1 && perPageValue <= 10) {
+      perPage = perPageValue;
+    }
+  }
+
+  if (typeof req.query.page === 'string') {
+    const pageQueryParam: string = req.query.page;
+    const pageValue: number = parseInt(pageQueryParam, 10);
+    if (!isNaN(pageValue) && pageValue >= 1) {
+      page = pageValue;
+    }
+  }
+
+  const baseUrl: string = `${req.protocol}://${req.get('host')}${req.baseUrl}`;
+
+  const contacts = await retrieveUserContactsService(
+    user,
+    perPage,
+    page,
+    baseUrl
+  );
+
+  return res.json(contacts);
 };
 
 const updateUserController = async (
@@ -58,4 +92,5 @@ export {
   updateUserController,
   deleteUserController,
   retrieveUserController,
+  retrieveUserContactsController,
 };
