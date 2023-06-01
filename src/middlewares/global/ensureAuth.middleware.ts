@@ -2,12 +2,12 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 
-const ensureAuthMiddleware = async (
+const ensureAuthMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.headers.authorization;
+  const token: string | undefined = req.headers.authorization;
 
   if (!token) {
     return res.status(401).json({
