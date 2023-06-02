@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import 'express-async-errors';
 import express, { Application } from 'express';
 import cors from 'cors';
-import swaggerDocs from './swagger.json';
+import swaggerDocs from './docs/swagger.json';
 import swaggerUi from 'swagger-ui-express';
 
 import handleAppErrorMiddleware from './middlewares/global/handleAppError.middleware';
