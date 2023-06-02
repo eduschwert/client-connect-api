@@ -140,7 +140,7 @@ yarn run start
   To import the workspace into Insomnia:
 </p>
 
-[![Run on Insomnia](https://insomnia.rest/images/run.svg)]("./src/workspace/client_connect-workspace.json")
+<a href="https://insomnia.rest/run/?label=client_connect-api&uri=https%3A%2F%2Fraw.githubusercontent.com%2Feduschwert%2Fclient-connect-api%2Fmain%2Fsrc%2Fworkspace%2Fclient-connect-workspace" target="_blank"><img src="https://insomnia.rest/images/run.svg" alt="Run in Insomnia"></a>
 
 <hr>
 
