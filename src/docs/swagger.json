@@ -399,33 +399,10 @@
       "get": {
         "tags": ["Users"],
         "summary": "Retrieve user contacts",
-        "description": "This route is responsible for retrieving all the contacts of a user based on their token. The contacts are returned with pagination. By default, it returns 5 contacts per page. You can use the `perPage` query parameter to specify the number of contacts per page, with a maximum value of 10. The `page` query parameter is used to navigate between pages and is set to 1 by default.",
+        "description": "This route is responsible for retrieving all the contacts of a user based on their token.",
         "security": [
           {
             "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "perPage",
-            "in": "query",
-            "description": "The number of contacts to be returned per page (maximum: 10).",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 10,
-              "default": 5
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "The page number to navigate through the contacts.",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "default": 1
-            }
           }
         ],
         "responses": {
@@ -436,45 +413,40 @@
                 "schema": {
                   "$ref": "#/components/schemas/contact_return"
                 },
-                "example": {
-                  "count": 4,
-                  "previousPage": null,
-                  "nextPage": null,
-                  "data": [
-                    {
-                      "id": "839d8127-79a4-4cbe-9d2d-d0eb00d119c4",
-                      "name": "Antonio",
-                      "email": "antonio@mail.com",
-                      "phone": "(66) 66666-6666",
-                      "createdAt": "2023-06-01T17:06:41.879Z",
-                      "updatedAt": "2023-06-01T17:06:41.879Z"
-                    },
-                    {
-                      "id": "e208fa67-1088-4f3e-b63d-c7331275726a",
-                      "name": "Augusto",
-                      "email": "augusto@mail.com",
-                      "phone": "(77) 77777-7777",
-                      "createdAt": "2023-06-01T17:06:19.910Z",
-                      "updatedAt": "2023-06-01T17:06:19.910Z"
-                    },
-                    {
-                      "id": "8709210b-b19b-49fe-926a-620588764aa2",
-                      "name": "Joao",
-                      "email": "joao@mail.com",
-                      "phone": "(55) 55555-5555",
-                      "createdAt": "2023-06-01T17:06:22.322Z",
-                      "updatedAt": "2023-06-01T17:06:22.322Z"
-                    },
-                    {
-                      "id": "83e89989-d4fa-435a-9b86-b9b9caf53c7d",
-                      "name": "Paulo",
-                      "email": "paulo@mail.com",
-                      "phone": "(99) 99999-9999",
-                      "createdAt": "2023-06-01T17:06:13.770Z",
-                      "updatedAt": "2023-06-01T17:06:13.770Z"
-                    }
-                  ]
-                }
+                "example": [
+                  {
+                    "id": "839d8127-79a4-4cbe-9d2d-d0eb00d119c4",
+                    "name": "Antonio",
+                    "email": "antonio@mail.com",
+                    "phone": "(66) 66666-6666",
+                    "createdAt": "2023-06-01T17:06:41.879Z",
+                    "updatedAt": "2023-06-01T17:06:41.879Z"
+                  },
+                  {
+                    "id": "e208fa67-1088-4f3e-b63d-c7331275726a",
+                    "name": "Augusto",
+                    "email": "augusto@mail.com",
+                    "phone": "(77) 77777-7777",
+                    "createdAt": "2023-06-01T17:06:19.910Z",
+                    "updatedAt": "2023-06-01T17:06:19.910Z"
+                  },
+                  {
+                    "id": "8709210b-b19b-49fe-926a-620588764aa2",
+                    "name": "Joao",
+                    "email": "joao@mail.com",
+                    "phone": "(55) 55555-5555",
+                    "createdAt": "2023-06-01T17:06:22.322Z",
+                    "updatedAt": "2023-06-01T17:06:22.322Z"
+                  },
+                  {
+                    "id": "83e89989-d4fa-435a-9b86-b9b9caf53c7d",
+                    "name": "Paulo",
+                    "email": "paulo@mail.com",
+                    "phone": "(99) 99999-9999",
+                    "createdAt": "2023-06-01T17:06:13.770Z",
+                    "updatedAt": "2023-06-01T17:06:13.770Z"
+                  }
+                ]
               }
             }
           },
